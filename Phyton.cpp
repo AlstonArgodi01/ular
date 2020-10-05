@@ -1,29 +1,32 @@
 #include <iostream>
+#include <conio.h>
 
 using namespace std;
 bool buyar;
 const int lebar = 20;
 const int tinggi = 20;
 int x, y, buahX, buahY, score;
-int tailX[100], tailY[100];
-int nTail;
-enum eDirecton { STOP = 0, LEFT, RIGHT, UP, DOWN};
-eDirecton dir;
-void Setup()
+int ekorX[100], ekorY[100];
+int nEkor;
+enum eArah { berhenti = 0, kiri, kanan, atas, bawah};
+eArah dir;
+
+
+void Setel()
 {
     buyar = false;
-    dir = STOP;
+    dir = berhenti;
     x = lebar / 2;
     y = tinggi / 2;
     buahX = rand() % lebar;
     buahY = rand() % tinggi;
     score = 0;
 }
-void Draw()
+void Kotak()
 {
     system("cls");
     for (int i = 0; i < lebar+2; i++)
-        cout << "#";
+        cout << "=";
     cout << endl;
  
     for (int i = 0; i < tinggi; i++)
@@ -31,19 +34,19 @@ void Draw()
         for (int j = 0; j < lebar; j++)
         {
             if (j == 0)
-                cout << "#";
+                cout << "=";
             if (i == y && j == x)
-                cout << "O";
+                cout << "#";
             else if (i == buahY && j == buahX)
-                cout << "F";
+                cout << "B";
             else
             {
                 bool print = false;
-                for (int k = 0; k < nTail; k++)
+                for (int k = 0; k < nEkor; k++)
                 {
-                    if (tailX[k] == j && tailY[k] == i)
+                    if (ekorX[k] == j && ekorY[k] == i)
                     {
-                        cout << "o";
+                        cout << "#";
                         print = true;
                     }
                 }
@@ -53,7 +56,7 @@ void Draw()
                  
  
             if (j == lebar - 1)
-                cout << "#";
+                cout << "=";
         }
         cout << endl;
     }
@@ -63,23 +66,23 @@ void Draw()
     cout << endl;
     cout << "Score:" << score << endl;
 }
-void Input()
+void Arah()
 {
     if (_kbhit())
     {
         switch (_getch())
         {
         case 'a':
-            dir = LEFT;
+            dir = kiri;
             break;
         case 'd':
-            dir = RIGHT;
+            dir = kanan;
             break;
         case 'w':
-            dir = UP;
+            dir = atas;
             break;
         case 's':
-            dir = DOWN;
+            dir = bawah;
             break;
         case 'x':
             buyar = true;
@@ -89,32 +92,32 @@ void Input()
 }
 void Logic()
 {
-    int prevX = tailX[0];
-    int prevY = tailY[0];
+    int prevX = ekorX[0];
+    int prevY = ekorY[0];
     int prev2X, prev2Y;
-    tailX[0] = x;
-    tailY[0] = y;
-    for (int i = 1; i < nTail; i++)
+    ekorX[0] = x;
+    ekorY[0] = y;
+    for (int i = 1; i < nEkor; i++)
     {
-        prev2X = tailX[i];
-        prev2Y = tailY[i];
-        tailX[i] = prevX;
-        tailY[i] = prevY;
+        prev2X = ekorX[i];
+        prev2Y = ekorY[i];
+        ekorX[i] = prevX;
+        ekorY[i] = prevY;
         prevX = prev2X;
         prevY = prev2Y;
     }
     switch (dir)
     {
-    case LEFT:
+    case kiri:
         x--;
         break;
-    case RIGHT:
+    case kanan:
         x++;
         break;
-    case UP:
+    case atas:
         y--;
         break;
-    case DOWN:
+    case bawah:
         y++;
         break;
     default:
@@ -123,8 +126,8 @@ void Logic()
     if (x >= lebar) x = 0; else if (x < 0) x = lebar - 1;
     if (y >= tinggi) y = 0; else if (y < 0) y = tinggi - 1;
  
-    for (int i = 0; i < nTail; i++)
-        if (tailX[i] == x && tailY[i] == y)
+    for (int i = 0; i < nEkor; i++)
+        if (ekorX[i] == x && ekorY[i] == y)
             buyar = true;
  
     if (x == buahX && y == buahY)
@@ -132,16 +135,20 @@ void Logic()
         score += 10;
         buahX = rand() % lebar;
         buahY = rand() % tinggi;
-        nTail++;
+        nEkor++;
     }
 }
 int main()
 {
-    Setup();
+  cout<<"------------peraturan permaianan--------------"; 
+  cout<<"1.Gunakan  WASD sebagai arah ular";
+  cout<<"2.Setiap ular terdapat buah sebaga skor permainan";
+  
+    Setel();
     while (!buyar)
     {
-        Draw();
-        Input();
+        Kotak();
+        Arah();
         Logic();
     }
     return 0;
